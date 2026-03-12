@@ -4,12 +4,8 @@ services:
     container_name: crud_app
     ports:
       - "3000:3000"
-    environment:
-      DATABASE_URL:    postgres://myuser:mypassword@db:5432/mydb
-      JWT_SECRET:      khitmin-jwt-secret-key
-      JWT_EXPIRES_IN:  7d
-      ADMIN_EMAIL:     admin@gmail.com
-      ADMIN_PASSWORD:  Admin123!
+    env_file:
+      - .env        # ← .env file ကနေ ယူတယ်
     depends_on:
       db:
         condition: service_healthy
@@ -18,10 +14,8 @@ services:
   db:
     image: postgres:17
     container_name: crud_db
-    environment:
-      POSTGRES_USER:     myuser
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB:       mydb
+    env_file:
+      - .env        # ← .env file ကနေ ယူတယ်
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
