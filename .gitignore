@@ -20,7 +20,3 @@ Thumbs.db
 # IDE
 .vscode
 .idea
-
-# Drizzle
-drizzle/*
-!drizzle/.gitkeep
