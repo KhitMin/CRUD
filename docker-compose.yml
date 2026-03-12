@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+    container_name: crud_app
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL:    postgres://myuser:mypassword@db:5432/mydb
+      JWT_SECRET:      khitmin-jwt-secret-key
+      JWT_EXPIRES_IN:  7d
+      ADMIN_EMAIL:     admin@gmail.com
+      ADMIN_PASSWORD:  Admin123!
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17
+    container_name: crud_db
+    environment:
+      POSTGRES_USER:     myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB:       mydb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U myuser -d mydb"]
+      interval: 5s
+      timeout:  5s
+      retries:  5
+    restart: unless-stopped
+
+volumes:
+  pgdata:
