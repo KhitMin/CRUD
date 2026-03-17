@@ -22,8 +22,10 @@ export const authService = {
   },
 
   async logout(): Promise<void> {
-    await api.post("/auth/logout");
-    localStorage.removeItem("token");
+    const refreshToken = localStorage.getItem("refreshToken");
+    await api.post("/auth/logout", { refreshToken });
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
   },
 };

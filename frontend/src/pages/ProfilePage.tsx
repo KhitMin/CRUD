@@ -62,9 +62,10 @@ export default function ProfilePage() {
       setSuccess("Profile updated successfully");
 
       // AuthContext ထဲက user data ကိုလည်း update လုပ်
-      const token = localStorage.getItem("token");
-      if (token) {
-        login(token, { ...user, ...res.data });
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (accessToken && refreshToken) {
+        login(accessToken, refreshToken, { ...user, ...res.data });
       }
     } catch (err: any) {
       const data = err.response?.data;

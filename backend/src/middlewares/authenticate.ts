@@ -4,7 +4,7 @@ import { posts } from "../schemas/post_schema";
 import { eq } from "drizzle-orm";
 import { db } from "../db";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET as string;
 
 export interface JwtPayload {
   id:    string;
@@ -19,6 +19,8 @@ export async function authenticate(
 ) {
   const authHeader = request.headers.authorization;
 
+  request.log.info({ authHeader }, "Checking Auth Header");
+
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return reply.status(401).send({
       success: false,
@@ -29,12 +31,14 @@ export async function authenticate(
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const decoded = jwt.verify(token, JWT_ACCESS_SECRET) as JwtPayload;
     request.user  = decoded;
-  } catch (err) {
+  } catch (err: any) {
+    request.log.error({ err }, "JWT Verify Error");
     return reply.status(401).send({
       success: false,
       message: "Invalid or expired token",
+      error_detail: err.message,
     });
   }
 }

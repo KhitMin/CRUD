@@ -18,7 +18,7 @@ export default function LoginPage() {
 
     try {
       const res = await authService.login(email, password);
-      login(res.token, res.data);
+      login(res.accessToken, res.refreshToken, res.data);
       navigate("/posts");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed");

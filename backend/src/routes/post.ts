@@ -5,6 +5,7 @@ import { posts } from "../schemas/post_schema";
 import { users } from "../schemas/user_schema";
 import { authenticate, authorizePostOwner } from "../middlewares/authenticate";
 import { eq, desc, sql } from "drizzle-orm";
+import { error } from "node:console";
 
 // ─── Schemas ──────────────────────────────────────────────────
 const createPostSchema = z.object({
@@ -79,6 +80,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                     properties: {
                         success: { type: "boolean" },
                         message: { type: "string" },
+                        error_detail: { type: "string" },
                     },
                 },
                 500: {
@@ -184,6 +186,7 @@ export async function postRoutes(fastify: FastifyInstance) {
                     properties: {
                         success: { type: "boolean" },
                         message: { type: "string" },
+                        error_detail: { type: "string" },
                     },
                 },
                 500: {

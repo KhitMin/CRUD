@@ -9,9 +9,11 @@ import type { User } from "../types";
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
-  login: (token: string, user: User) => void;
+  accessToken: string | null;
+  refreshToken: string | null;
+  login: (accessToken: string, refreshToken: string, user: User) => void;
   logout: () => void;
+  setAccessToken: (token: string) => void;
   isAuthenticated: boolean;
   isAdmin: boolean;
 }
@@ -20,39 +22,53 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const savedToken = localStorage.getItem("token");
+    const savedAccessToken = localStorage.getItem("accessToken");
+    const savedRefreshToken = localStorage.getItem("refreshToken");
     const savedUser = localStorage.getItem("user");
-    if (savedToken && savedUser) {
-      setToken(savedToken);
+    if (savedAccessToken && savedUser) {
+      setAccessToken(savedAccessToken);
+      setRefreshToken(savedRefreshToken);
       setUser(JSON.parse(savedUser));
     }
   }, []);
 
-  const login = (newToken: string, newUser: User) => {
-    localStorage.setItem("token", newToken);
+  const login = (newAccessToken: string, newRefreshToken: string, newUser: User) => {
+    localStorage.setItem("accessToken", newAccessToken);
+    localStorage.setItem("refreshToken", newRefreshToken);
     localStorage.setItem("user", JSON.stringify(newUser));
-    setToken(newToken);
+    setAccessToken(newAccessToken);
+    setRefreshToken(newRefreshToken);
     setUser(newUser);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
-    setToken(null);
+    setAccessToken(null);
+    setRefreshToken(null);
     setUser(null);
+  };
+
+  const updateAccessToken = (token: string) => {
+    localStorage.setItem("accessToken", token);
+    setAccessToken(token);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        token,
+        accessToken,
+        refreshToken,
         login,
         logout,
-        isAuthenticated: !!token,
+        setAccessToken: updateAccessToken,
+        isAuthenticated: !!accessToken,
         isAdmin: user?.role === "admin",
       }}
     >

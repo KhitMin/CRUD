@@ -25,7 +25,8 @@ export interface Post {
 
 export interface AuthResponse {
   success: boolean;
-  token: string;
+  accessToken: string;
+  refreshToken: string;
   data: User;
 }
 
