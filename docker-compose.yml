@@ -1,9 +1,8 @@
 services:
   app:
     build: ./backend
-    container_name: crud_app
-    ports:
-      - "3000:3000"
+    deploy:
+      replicas: 3
     env_file:
       - ./backend/.env
     depends_on:
@@ -13,7 +12,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: crud_frontend
     ports:
       - "80:80"
     depends_on:
@@ -22,13 +20,10 @@ services:
 
   db:
     image: postgres:17
-    container_name: crud_db
     environment:
       POSTGRES_USER: myuser
       POSTGRES_PASSWORD: mypassword
       POSTGRES_DB: mydb
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
